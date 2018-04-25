@@ -1,0 +1,34 @@
+{{ $values := .Values }}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cron-job-sample
+spec:
+  schedule: "*/1 * * * *"
+  successfulJobsHistoryLimit: 12
+  failedJobsHistoryLimit: 12
+  jobTemplate:
+    spec:
+      backoffLimit: 4
+      template:
+        spec:
+          containers:
+          - name: test-sample
+            image: asia.gcr.io/samples/sample:latest
+            env:
+              - name: AWS_ACCESS_KEY_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: secrets-sample
+                    key: AWS_ACCESS_KEY_ID
+              - name: AWS_SECRET_ACCESS_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: secrets-sample
+                    key: AWS_SECRET_ACCESS_KEY
+              {{- with $values.service.env }}
+              - name: NODE_ENV
+                value: {{ .NODE_ENV }}
+              {{- end }}
+          restartPolicy: OnFailure

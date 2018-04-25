@@ -1,0 +1,7 @@
+service:
+  image:
+    repo: asia.gcr.io/samples/sample:latest
+    tag: latest
+    imagePullPolicy: Always
+  env:
+    NODE_ENV: testing
